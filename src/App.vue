@@ -1,26 +1,122 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <div id="app">
+    <ejs-schedule
+      height="650px"
+      width="100%"
+      :selectedDate="selectedDate"
+      :eventSettings="eventSettings"
+    >
+      <e-views>
+        <e-view option="Day"></e-view>
+        <e-view option="Week" startHour="07:00" endHour="15:00"></e-view>
+        <e-view option="WorkWeek" startHour="10:00" endHour="18:00"></e-view>
+        <e-view option="Month" showWeekend="false"></e-view>
+        <e-view option="Agenda"></e-view>
+      </e-views>
+      <e-resources>
+        <e-resource
+          field="OwnerId"
+          title="Owner"
+          name="Owners"
+          :dataSource="ownerDataSource"
+          textField="OwnerText"
+          idField="Id"
+          colorField="OwnerColor"
+        >
+        </e-resource>
+      </e-resources>
+    </ejs-schedule>
+  </div>
 </template>
-
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import {
+  ScheduleComponent,
+  Day,
+  Week,
+  WorkWeek,
+  Month,
+  Agenda,
+  DragAndDrop,
+  Resize,
+  ViewsDirective,
+  ViewDirective,
+  ResourcesDirective,
+  ResourceDirective,
+} from "@syncfusion/ej2-vue-schedule";
 
 export default {
-  name: 'App',
+  name: "App",
+  // Declaring component and its directives
   components: {
-    HelloWorld
-  }
-}
+    "ejs-schedule": ScheduleComponent,
+    "e-views": ViewsDirective,
+    "e-view": ViewDirective,
+    "e-resources": ResourcesDirective,
+    "e-resource": ResourceDirective,
+  },
+  // Bound properties declaration
+  data() {
+    return {
+      selectedDate: new Date(2022, 5, 12),
+      allowMultiple: true,
+      ownerDataSource: [
+        { OwnerText: "Nancy", Id: 1, OwnerColor: "#ffaa00" },
+        { OwnerText: "Steven", Id: 2, OwnerColor: "#f8a398" },
+        { OwnerText: "Michael", Id: 3, OwnerColor: "#7499e1" },
+        // { OwnerText: "Sayket", Id: 4, OwnerColor: "#69c5a5" },
+      ],
+      eventSettings: {
+        dataSource: [
+          {
+            Id: 1,
+            Subject: "Surgery - Andrew",
+            EventType: "Confirmed",
+            StartTime: new Date(2021, 7, 10, 9, 0),
+            EndTime: new Date(2021, 7, 10, 10, 0),
+            OwnerId: 2,
+          },
+          {
+            Id: 2,
+            Subject: "Consulting - John",
+            EventType: "Confirmed",
+            StartTime: new Date(2021, 7, 11, 10, 0),
+            EndTime: new Date(2021, 7, 11, 11, 30),
+            OwnerId: 3,
+          },
+          {
+            Id: 3,
+            Subject: "Therapy - Robert",
+            EventType: "Requested",
+            StartTime: new Date(2021, 7, 12, 11, 30),
+            EndTime: new Date(2021, 7, 12, 12, 30),
+            OwnerId: 1,
+          }
+          // ,
+          //  {
+          //   Id: 4,
+          //   Subject: "Demo task sayket ",
+          //   EventType: "Requested",
+          //   StartTime: new Date(2022, 5, 12, 11, 30),
+          //   EndTime: new Date(2021, 5, 12, 12, 30),
+          //   OwnerId: 4,
+          // },
+        ],
+      },
+    };
+  },
+  provide: {
+    schedule: [Day, Week, WorkWeek, Month, Agenda, DragAndDrop, Resize],
+  },
+};
 </script>
 
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+@import "../node_modules/@syncfusion/ej2-base/styles/material.css";
+@import "../node_modules/@syncfusion/ej2-buttons/styles/material.css";
+@import "../node_modules/@syncfusion/ej2-calendars/styles/material.css";
+@import "../node_modules/@syncfusion/ej2-dropdowns/styles/material.css";
+@import "../node_modules/@syncfusion/ej2-inputs/styles/material.css";
+@import "../node_modules/@syncfusion/ej2-navigations/styles/material.css";
+@import "../node_modules/@syncfusion/ej2-popups/styles/material.css";
+@import "../node_modules/@syncfusion/ej2-vue-schedule/styles/material.css";
 </style>
