@@ -1,113 +1,143 @@
 <template>
-  <div id="app">
-    <ejs-schedule
-      height="650px"
-      width="100%"
-      :selectedDate="selectedDate"
-      :eventSettings="eventSettings"
-    >
-      <e-views>
-        <e-view option="Day"></e-view>
-        <e-view option="Week" startHour="07:00" endHour="15:00"></e-view>
-        <e-view option="WorkWeek" startHour="10:00" endHour="18:00"></e-view>
-        <e-view option="Month" showWeekend="false"></e-view>
-        <e-view option="Agenda"></e-view>
-      </e-views>
-      <e-resources>
-        <e-resource
-          field="OwnerId"
-          title="Owner"
-          name="Owners"
-          :dataSource="ownerDataSource"
-          textField="OwnerText"
-          idField="Id"
-          colorField="OwnerColor"
+  <div class="schedule-vue-sample">
+    <div class="col-md-12 control-section">
+      <div class="content-wrapper">
+        <ejs-schedule
+          id="Schedule"
+          height="650px"
+          :cssClass="cssClass"
+          :selectedDate="selectedDate"
+          :eventSettings="eventSettings"
+          :group="group"
+          :currentView="currentView"
+          :resourceHeaderTemplate="resourceHeaderTemplate"
         >
-        </e-resource>
-      </e-resources>
-    </ejs-schedule>
+          <e-views>
+            <e-view option="Day"></e-view>
+            <e-view option="WorkWeek"></e-view>
+            <e-view option="Month" :eventTemplate="monthEventTemplate"></e-view>
+            <e-view option="TimelineWeek"></e-view>
+          </e-views>
+          <e-resources>
+            <e-resource
+              field="ConferenceId"
+              title="Attendees"
+              name="Conferences"
+              :allowMultiple="allowMultiple"
+              :dataSource="resourceDataSource"
+              textField="Text"
+              idField="Id"
+              colorField="Color"
+            >
+            </e-resource>
+          </e-resources>
+        </ejs-schedule>
+      </div>
+    </div>
   </div>
 </template>
 <script>
+import Vue from "vue";
+import { extend } from "@syncfusion/ej2-base";
+// import { resourceConferenceData } from "./datasource";
 import {
-  ScheduleComponent,
+  SchedulePlugin,
   Day,
-  Week,
   WorkWeek,
   Month,
-  Agenda,
-  DragAndDrop,
+  TimelineViews,
   Resize,
-  ViewsDirective,
-  ViewDirective,
-  ResourcesDirective,
-  ResourceDirective,
+  DragAndDrop,
 } from "@syncfusion/ej2-vue-schedule";
+// Vue.use(SchedulePlugin);
 
-export default {
-  name: "App",
-  // Declaring component and its directives
-  components: {
-    "ejs-schedule": ScheduleComponent,
-    "e-views": ViewsDirective,
-    "e-view": ViewDirective,
-    "e-resources": ResourcesDirective,
-    "e-resource": ResourceDirective,
-  },
-  // Bound properties declaration
-  data() {
+// var groupVue = Vue.component("demo", {
+//   template: '<div class="subject">{{data.Subject}}</div>',
+//   data() {
+//     return {
+//       data: {},
+//     };
+//   },
+// });
+
+// var resourceHeaderVue = Vue.component("resource-headerTemplate", {
+//   template:
+//     '<div class="template-wrap"><div class="resource-image"><img :src="getImage" :alt="getImage" width="45px" height="45px"/>' +
+//     '</div><div class="resource-details"><div class="resource-name">{{getEmployeeName(data)}}</div><div class="resource-designation">{{getEmployeeDesignation(data)}}</div></div></div>',
+//   data() {
+//     return {
+//       data: {},
+//     };
+//   },
+
+// });
+
+export default Vue.extend({
+  data: function () {
     return {
-      selectedDate: new Date(2022, 5, 12),
-      allowMultiple: true,
-      ownerDataSource: [
-        { OwnerText: "Nancy", Id: 1, OwnerColor: "#ffaa00" },
-        { OwnerText: "Steven", Id: 2, OwnerColor: "#f8a398" },
-        { OwnerText: "Michael", Id: 3, OwnerColor: "#7499e1" },
-        // { OwnerText: "Sayket", Id: 4, OwnerColor: "#69c5a5" },
-      ],
       eventSettings: {
-        dataSource: [
-          {
-            Id: 1,
-            Subject: "Surgery - Andrew",
-            EventType: "Confirmed",
-            StartTime: new Date(2021, 7, 10, 9, 0),
-            EndTime: new Date(2021, 7, 10, 10, 0),
-            OwnerId: 2,
-          },
-          {
-            Id: 2,
-            Subject: "Consulting - John",
-            EventType: "Confirmed",
-            StartTime: new Date(2021, 7, 11, 10, 0),
-            EndTime: new Date(2021, 7, 11, 11, 30),
-            OwnerId: 3,
-          },
-          {
-            Id: 3,
-            Subject: "Therapy - Robert",
-            EventType: "Requested",
-            StartTime: new Date(2021, 7, 12, 11, 30),
-            EndTime: new Date(2021, 7, 12, 12, 30),
-            OwnerId: 1,
-          }
-          // ,
-          //  {
-          //   Id: 4,
-          //   Subject: "Demo task sayket ",
-          //   EventType: "Requested",
-          //   StartTime: new Date(2022, 5, 12, 11, 30),
-          //   EndTime: new Date(2021, 5, 12, 12, 30),
-          //   OwnerId: 4,
-          // },
-        ],
+        dataSource: extend([], resourceConferenceData, null, true),
+        fields: {
+          subject: { title: "Conference Name", name: "Subject" },
+          description: { title: "Summary", name: "Description" },
+          startTime: { title: "From", name: "StartTime" },
+          endTime: { title: "To", name: "EndTime" },
+        },
+      },
+      selectedDate: new Date(2021, 5, 5),
+      currentView: "WorkWeek",
+      cssClass: "groupediting",
+      group: {
+        allowGroupEdit: true,
+        resources: ["Conferences"],
+      },
+      resourceDataSource: [
+        { Text: "Margaret", Id: 1, Color: "#1aaa55" },
+        { Text: "Robert", Id: 2, Color: "#357cd2" },
+        { Text: "Laura", Id: 3, Color: "#7fa900" },
+      ],
+      allowMultiple: true,
+      resourceHeaderTemplate: function (e) {
+        return { template: resourceHeaderVue };
+      },
+      monthEventTemplate: function (e) {
+        return {
+          template: groupVue,
+        };
       },
     };
   },
   provide: {
-    schedule: [Day, Week, WorkWeek, Month, Agenda, DragAndDrop, Resize],
+    schedule: [Day, WorkWeek, Month, TimelineViews, Resize, DragAndDrop],
   },
-};
+  computed: {
+    getImage: function () {
+      return (
+        "./source/schedule/images/" + this.getEmployeeImage(this.data) + ".png"
+      );
+    },
+  },
+  methods: {
+    getEmployeeName: function (data) {
+      let value = JSON.parse(JSON.stringify(data));
+      return value.resourceData
+        ? value.resourceData[value.resource.textField]
+        : value.resourceName;
+    },
+    getEmployeeImage: function (data) {
+      let resourceName = this.getEmployeeName(data);
+      return resourceName.toLowerCase();
+    },
+    getEmployeeDesignation: function (data) {
+      let resourceName = this.getEmployeeName(data);
+      return resourceName === "Margaret"
+        ? "Sales Representative"
+        : resourceName === "Robert"
+        ? "Vice President, Sales"
+        : "Inside Sales Coordinator";
+    },
+  },
+});
 </script>
 
 <style>
@@ -119,4 +149,80 @@ export default {
 @import "../node_modules/@syncfusion/ej2-navigations/styles/material.css";
 @import "../node_modules/@syncfusion/ej2-popups/styles/material.css";
 @import "../node_modules/@syncfusion/ej2-vue-schedule/styles/material.css";
+/*  */
+
+.schedule-vue-sample
+  .groupediting.e-schedule
+  .e-month-view
+  .e-appointment
+  .e-appointment-details {
+  padding: 1px;
+  padding-left: 3px;
+}
+
+.schedule-vue-sample
+  .groupediting.e-schedule
+  .e-vertical-view
+  .e-resource-cells {
+  height: 62px;
+}
+
+.schedule-vue-sample .groupediting.e-schedule .template-wrap {
+  display: flex;
+  text-align: left;
+}
+
+.schedule-vue-sample .groupediting.e-schedule .template-wrap .resource-image {
+  width: 45px;
+  height: 45px;
+  background-size: 45px;
+  background-repeat: no-repeat;
+}
+
+.schedule-vue-sample .groupediting.e-schedule .template-wrap .resource-details {
+  padding-left: 10px;
+}
+
+.schedule-vue-sample
+  .groupediting.e-schedule
+  .template-wrap
+  .resource-details
+  .resource-name {
+  font-size: 16px;
+  font-weight: 500;
+  padding-right: 10px;
+}
+
+.schedule-vue-sample
+  .groupediting.e-schedule
+  .template-wrap
+  .resource-details
+  .resource-designation {
+  font-size: 12px;
+}
+
+.schedule-vue-sample
+  .groupediting.e-schedule.e-device
+  .template-wrap
+  .resource-details
+  .resource-designation {
+  display: none;
+}
+
+.schedule-vue-sample
+  .groupediting.e-schedule.e-device
+  .template-wrap
+  .resource-details
+  .resource-name {
+  font-size: inherit;
+  font-weight: inherit;
+  padding-top: 5px;
+}
+
+.schedule-vue-sample
+  .groupediting.e-schedule.e-device
+  .e-resource-tree-popup
+  .e-fullrow {
+  height: 50px;
+}
 </style>
